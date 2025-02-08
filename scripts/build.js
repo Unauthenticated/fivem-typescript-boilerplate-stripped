@@ -4,7 +4,6 @@ import { exists, exec, getFiles } from './utils.js';
 import { createBuilder, createFxmanifest } from '@overextended/fx-utils';
 
 const watch = process.argv.includes('--watch');
-const web = await exists('./web');
 
 createBuilder(
   watch,
@@ -30,17 +29,15 @@ createBuilder(
     },
   ],
   async (outfiles) => {
-    const files = await getFiles('dist/web', 'static', 'locales');
+    const files = await getFiles('static', 'locales');
     await createFxmanifest({
       client_scripts: [outfiles.client],
       server_scripts: [outfiles.server],
       files: ['lib/init.lua', 'lib/client/**.lua', 'locales/*.json', 'common/data/*.json', ...files],
       dependencies: ['/server:7290', '/onesync'],
       metadata: {
-        ui_page: 'dist/web/index.html',
+        
       },
     });
   }
 );
-
-if (web) await exec(`cd ./web && vite build ${watch ? '--watch' : ''}`);
